@@ -83,18 +83,7 @@ will be regex, JSON and YAML parsers.
 ### Regex
 
 If the pattern is a plain string, it is evaluated as a grep-like
-regular expression pattern, with these special symbols:
-
-| symbol | meaning |
-|---|---|
-| @ | the outputing token |
-| . | any character |
-| \\^ | start of line |
-| \\$ | end of line |
-| \\? | previous item is optional |
-| \\* | previous item is matched zero or more times |
-| \\+ | previous item is matched one or more times |
-| \\\\ | match the symbol `\` |
+regular expression pattern.
 
 ### JSON, YAML parser
 
@@ -129,3 +118,124 @@ output file.
 The CLI can be then further extended so that users can create new configurations
 from existing templates and configure it in a way that they don't need to edit the
 configuration file manualy.
+
+## Execution flow
+
+``` mermaid
+flowchart TD;
+    subgraph Legend
+        D[[Data]]
+        F[/File\]
+        P{{Function}}
+    end
+
+    subgraph Patterns Package
+        Reg{{Regex pattern}} -.-> LoP[[List of patterns]]
+        Json{{JSON pattern}} -.-> LoP
+        Yaml{{YAML pattern}} -.-> LoP
+    end
+
+    subgraph Configration Package
+        MkConf{{makeConfiguration}} -.-> Conf[[Configuration]]
+    end
+
+    ConfFile[/Configuration file\] ==> MkConf
+    LoP --Patterns syntax--> MkConf
+    
+    Wd[/Working directory\] ==> FileM
+    subgraph FileMatch Package
+        Conf --Which files to match--> FileM{{Files matcher}}
+        FileM -.-> Files[[Raw files content and which pattern they use]]
+    end
+    
+    subgraph DependencyGraph Package
+        Files --> Dep{{Dependency matcher}}
+        LoP --Actual matching functions--> Dep
+        Dep -.-> Graph[[Dependency graph]]
+    end
+
+    subgraph Writter Package
+        Dot{{Dot Graph Maker}} --> Write{{Writing function}}
+        UML{{UML Graph Maker}} --> Write
+    end
+
+    Graph --> Write
+    Write ==> Output[/"Output file(s)"\]
+```
+
+## Configuration specification
+
+***Configuration***
+
+Many top level configurations in a YAML file
+
+***top level configuration***
+```yaml
+configuration-name:
+    files: array of <file>
+    patterns: array of <pattern>
+    type: ( UML | Dot )
+    output: <string>
+```
+
+***file***
+```yaml
+<string>
+```
+
+Special characters:
+
+| symbol | meaning |
+|---|---|
+| `/` | directory separator |
+| `*` | match zero or more characters except directory separator |
+| `**` | match any file or zero or more nested directories |s
+| `?` | match any single character except directory separator |
+
+
+***patterns***
+```yaml
+type: ( module | file )
+( fixed-name: string | name: ( <pattern> | file-name ) )
+pattern: <pattern>
+```
+
+***pattern***
+```yaml
+( <regex> | <yaml-pattern> | <json-patter> )
+```
+
+***regex***
+```yaml
+<string>
+```
+
+Special characters:
+
+| symbol | meaning |
+|---|---|
+| `@` | the outputing token |
+| `\.` | any character |
+| `\^` | start of line |
+| `\$` | end of line |
+| `\?` | previous item is optional |
+| `\*` | previous item is matched zero or more times |
+| `\+` | previous item is matched one or more times |
+| `\\` | match the symbol `\` |
+| (space) | match one or more whitespace characters (except newline) |
+
+***yaml-pattern***
+
+```yaml
+type: yaml-parser
+yaml-path: <string>
+iterate-over: ( keys | values | array )
+```
+
+***json-pattern***
+
+```yaml
+type: json-parser
+json-path: <string>
+iterate-over: ( keys | values | array )
+```
