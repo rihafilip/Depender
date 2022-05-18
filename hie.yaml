@@ -1,0 +1,13 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "Depender:lib"
+
+    - path: "./app/Main.hs"
+      component: "Depender:exe:Depender-exe"
+
+    - path: "./app/Paths_Depender.hs"
+      component: "Depender:exe:Depender-exe"
+
+    - path: "./test"
+      component: "Depender:test:Depender-test"
