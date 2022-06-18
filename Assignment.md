@@ -26,36 +26,36 @@ elm-project:
                 type: json-parser
                 json-path: ".dependencies.direct"
                 iterate-over: keys
-          
+
     type : UML
     output: "doc/project-dependecy.png"
-    
+
 cpp:
     files:
         - "src/*.cpp"
         - "src/*.hpp"
 
     patterns:
-        - pattern: "\^#include <@>"
+        - pattern: \^#include <\@>
           type: module
-          name: file-name
-                
-        - pattern: '\^#include "@"'
+          file-name: with-extension
+
+        - pattern: \^#include "\@"
           type: file
-          name: file-name
-          
+          file-name: with-extension
+
     type: dot
     output: "doc/cpp-dep.dot"
-    
+
 haskell:
     files:
         - "backend/.hs"
-    
+
     patterns:
-        - pattern: "\^ import @"
+        - pattern: \^ import \@
           type: module
-          name: "\^ module @ where"
-    
+          name: \^ module \@ where
+
     type: dot
     output: "doc/backend-dep.dot"
 
@@ -173,7 +173,7 @@ Many top level configurations in a YAML file
 ```yaml
 configuration-name:
     files: array of <file>
-    patterns: array of <pattern>
+    patterns: array of <dependency-pattern>
     type: ( UML | Dot )
     output: <string>
 ```
@@ -192,11 +192,12 @@ Special characters:
 | `**` | match any file or zero or more nested directories |s
 | `?` | match any single character except directory separator |
 
+more than two stars in a success are taken as an error
 
-***patterns***
+***dependency-pattern***
 ```yaml
 type: ( module | file )
-( fixed-name: string | name: ( <pattern> | file-name ) )
+( fixed-name: string | file-name: ( with-extension | without-extension ) | name: <pattern> )
 pattern: <pattern>
 ```
 
@@ -214,14 +215,17 @@ Special characters:
 
 | symbol | meaning |
 |---|---|
-| `@` | the outputing token |
-| `\.` | any character |
+| `\@` | the next match on `\.\+` is the outputed token |
+| `\.` | any character except spaces |
+| `\_` | any character including spaces |
 | `\^` | start of line |
 | `\$` | end of line |
 | `\?` | previous item is optional |
 | `\*` | previous item is matched zero or more times |
 | `\+` | previous item is matched one or more times |
 | `\\` | match the symbol `\` |
+| `\(` (pattern) `\)` | define a subgroup, working as a single item |
+| (pattern) `\\|` (pattern) | alternation between two patterns |
 | (space) | match one or more whitespace characters (except newline) |
 
 ***yaml-pattern***
