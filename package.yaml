@@ -23,6 +23,9 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+  - yaml
+  - text
 
 executables:
   Depender-exe:
