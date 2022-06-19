@@ -132,10 +132,16 @@ compile = foldl (liftA2 $ \xs x -> concat x ++ xs) ("" <$ epsilon) . map trans
 
 ----------------------------------------------------------
 
--- | Run a Regex pattern and return a graph TODO
-runRegex :: ListParser String -> [String] -> Graph
-runRegex reg = undefined $
-    map ((fst <$>). runParser reg)
+-- | Run a parser and return the first match
+regexFirst :: ListParser String -> String -> Maybe String
+regexFirst parser str =
+  case regexAll parser str of
+    x:xs -> Just x
+    [] -> Nothing
+
+-- | Run a parser and return all matches
+regexAll :: ListParser String -> String -> [String]
+regexAll parser = map fst . runParser parser
 
 ----------------------------------------------------------
 
@@ -144,9 +150,12 @@ fromConfig :: Yaml.Value -> PatternTry
 fromConfig (Yaml.String str) =
   case getPattern (T.unpack str) of
     Left s -> PatternError s
-    Right irs -> PatternSuccess (runRegex $ compile irs)
+    Right irs ->
+      let compiled = compile irs
+       in PatternSuccess $
+            MkPatternMatcher (regexFirst compiled) (regexAll compiled)
 fromConfig _ = IncorrectPattern
 
 -- | The actual regex pattern
 regexPattern :: Pattern
-regexPattern = MkPattern "Regex" fromConfig
+regexPattern = ("Regex", fromConfig)

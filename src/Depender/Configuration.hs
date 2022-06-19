@@ -21,7 +21,7 @@ data SingleConfiguration = MkSC
 data PatternWithMetadata = MkPatternWMD
   { patternType :: PatternType
   , pName :: PatternName
-  , actuallPattern :: PatternFunction
+  , actuallPattern :: PatternMatcher
   }
 
 -- | If the patterns works on file or module structure
@@ -32,4 +32,4 @@ data PatternName
   = FixedName String
   | FileNameWithExtension
   | FileNameNoExtension
-  | NameFromPattern PatternFunction
+  | NameFromPattern PatternMatcher
