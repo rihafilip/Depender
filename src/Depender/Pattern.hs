@@ -10,6 +10,7 @@ data Pattern = MkPattern
   , fromConfig :: Yaml.Value -> PatternTry
   }
 
+-- | Get a list of files with contents and return
 type PatternFunction = [String] -> Graph
 
 -- | Result of trying to extract a pattern

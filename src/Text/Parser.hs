@@ -1,25 +1,26 @@
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE TupleSections #-}
-{-# LANGUAGE RankNTypes #-}
--- for MonadFail (Either String)
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TupleSections #-}
 
 module Text.Parser
-  (
-    -- * Base parser
-    Parser(runParser),
+  ( -- * Base parser
+    Parser (runParser),
     parse,
     pfail,
+
     -- * Basic combinators
     satisfy,
     succeed,
     epsilon,
     choice,
     chain,
+
     -- * Specialized parser for strings
     CharParser,
     char,
     string,
+
     -- * Operators
     (=?>),
     (=$>),
@@ -27,21 +28,15 @@ module Text.Parser
 where
 
 import Control.Applicative
-    ( Applicative(liftA2), Alternative(empty, (<|>)) )
+  ( Alternative (empty, (<|>)),
+    Applicative (liftA2),
+  )
 import Control.Monad ((>=>))
 import qualified Data.Bifunctor as Bf
 import Data.Foldable (asum)
 
--- | Parser type
+-- | Base parser type. It takes a MonadFail `m`, input type `i` and output type `o`
 newtype Parser m i o = MkParser {runParser :: MonadFail m => [i] -> m (o, [i])}
-
-{-
->>>
->>> y = 20
->>> x+ y
-30
-
--}
 
 -- | Run a parser
 parse :: MonadFail m => Parser m i o -> [i] -> m o
@@ -85,10 +80,12 @@ instance Monad (Parser m i) where
 instance MonadFail (Parser m i) where
   fail str = MkParser (const $ fail str)
 
+-- | Specialization of MonadFail fail for parsers
 pfail :: String -> Parser m i o
 pfail = fail
 
 ------------------------------------------
+
 -- | Put a token to predicate, returning it on true and failing on false
 satisfy :: (i -> Bool) -> Parser m i i
 satisfy p = MkParser $ \case
@@ -110,7 +107,6 @@ epsilon = pure ()
 -- | Try to succeed with any of the given parsers
 choice :: Alternative m => [Parser m i o] -> Parser m i o
 choice = asum
-
 
 -- | Chain many parsers together
 chain :: [Parser m i o] -> Parser m i [o]
@@ -138,7 +134,6 @@ string = chain . map char
 -- | Match a certain string, returning a different token
 (=$>) :: String -> a -> CharParser m a
 (=$>) str = (<$ string str)
-
 
 --------------------------------------------
 -- Helper MonadFail instance

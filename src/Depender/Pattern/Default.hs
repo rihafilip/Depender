@@ -4,5 +4,6 @@ import Data.Yaml (Value)
 import Depender.Pattern
 import Depender.Pattern.Regex
 
+-- | Default list of patterns
 defaultList :: [Pattern]
 defaultList = [regexPattern]

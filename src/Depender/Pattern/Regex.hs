@@ -97,6 +97,7 @@ getPattern =
 
 ----------------------------------------------------------
 
+-- | Parser on Strings that outputs a list
 type ListParser a = Parser [] Char a
 
 -- | Yield the output of regex parser
@@ -131,12 +132,14 @@ compile = foldl (liftA2 $ \xs x -> concat x ++ xs) ("" <$ epsilon) . map trans
 
 ----------------------------------------------------------
 
+-- | Run a Regex pattern and return a graph TODO
 runRegex :: ListParser String -> [String] -> Graph
-runRegex reg = undefined $ -- TODO to graph
+runRegex reg = undefined $
     map ((fst <$>). runParser reg)
 
 ----------------------------------------------------------
 
+-- | Try to turn a Yaml Value to Pattern
 fromConfig :: Yaml.Value -> PatternTry
 fromConfig (Yaml.String str) =
   case getPattern (T.unpack str) of
