@@ -192,8 +192,6 @@ Special characters:
 | `**` | match any file or zero or more nested directories |s
 | `?` | match any single character except directory separator |
 
-more than two stars in a success are taken as an error
-
 ***dependency-pattern***
 ```yaml
 type: ( module | file )

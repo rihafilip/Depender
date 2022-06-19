@@ -26,6 +26,7 @@ library:
   dependencies:
   - yaml
   - text
+  - filepath
 
 executables:
   Depender-exe:
