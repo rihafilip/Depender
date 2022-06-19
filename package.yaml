@@ -27,6 +27,7 @@ library:
   - yaml
   - text
   - filepath
+  - containers
 
 executables:
   Depender-exe:
