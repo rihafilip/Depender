@@ -8,10 +8,11 @@ import Control.Monad ((>=>))
 import qualified Data.Bifunctor as Bf
 import Data.Char (isSpace)
 import Data.Functor (($>))
+import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
 import Debug.Trace
 import Depender.DependencyGraph
-import Depender.Pattern
+import Depender.Pattern hiding (fromConfig, getPattern)
 import Text.Parser
 import Prelude hiding (any)
 
@@ -106,12 +107,6 @@ yield = ((: []) <$>)
 loid :: ListParser o1 -> ListParser [o2]
 loid = ([] <$)
 
--- | Concat the output of two regex parsers
-infixl 4 |+|
-
-(|+|) :: ListParser [a] -> ListParser [a] -> ListParser [a]
-(|+|) = liftA2 (++)
-
 ----------------------------------------------------------
 
 -- | Transform a InnerRegex to an actual parser
@@ -136,5 +131,19 @@ compile = foldl (liftA2 $ \xs x -> concat x ++ xs) ("" <$ epsilon) . map trans
 
 ----------------------------------------------------------
 
+runRegex :: ListParser String -> [String] -> Graph
+runRegex reg = undefined $ -- TODO to graph
+    map ((fst <$>). runParser reg)
+
+----------------------------------------------------------
+
+fromConfig :: Yaml.Value -> PatternTry
+fromConfig (Yaml.String str) =
+  case getPattern (T.unpack str) of
+    Left s -> PatternError s
+    Right irs -> PatternSuccess (runRegex $ compile irs)
+fromConfig _ = IncorrectPattern
+
+-- | The actual regex pattern
 regexPattern :: Pattern
-regexPattern = MkPattern {patternName = "Regex", fromConfig = undefined}
+regexPattern = MkPattern "Regex" fromConfig
