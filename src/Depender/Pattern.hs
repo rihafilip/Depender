@@ -10,9 +10,11 @@ data Pattern = MkPattern
   , fromConfig :: Yaml.Value -> PatternTry
   }
 
+type PatternFunction = [String] -> Graph
+
 -- | Result of trying to extract a pattern
 data PatternTry
-  = PatternSuccess ([String] -> Graph) -- * Correct pattern -> matching funciton
+  = PatternSuccess PatternFunction -- * Correct pattern -> matching funciton
   | IncorrectPattern -- * Not a pattern of given type
   | PatternError String -- * Pattern of given type but with incorrect structure
 
