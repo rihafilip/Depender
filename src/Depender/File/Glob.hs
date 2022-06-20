@@ -1,7 +1,7 @@
 {-# HLINT ignore "Redundant lambda" #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-module Depender.File.Glob (globFilterFPs) where
+module Depender.File.Glob (FileMatcher, globFilterFPs) where
 
 import Control.Applicative
 import Data.Maybe (mapMaybe)
@@ -64,12 +64,17 @@ canonizeGlob (Star : DoubleStar : fs) = canonizeGlob (DoubleStar : fs)
 canonizeGlob (DoubleStar : Star : fs) = canonizeGlob (DoubleStar : fs)
 canonizeGlob (f : fs) = f : canonizeGlob fs
 
+newtype FileMatcher = MkFileMatcher { runFileMatcher :: [FilePath] -> [FilePath] }
+
+instance Show FileMatcher where
+  show _ = "<fileMatcher>"
+
 -- | Filter a list of filepaths thru a list of file patterns,
 -- returning Nothing if the patterns are incorrect
-globFilterFPs :: [String] -> [FilePath] -> Maybe [FilePath]
-globFilterFPs strs dirs
+globFilterFPs :: [String] -> Maybe FileMatcher
+globFilterFPs strs
   | length formats /= length strs = Nothing
-  | otherwise = Just $ filter matchesAny dirs
+  | otherwise = Just . MkFileMatcher $ filter matchesAny . map normalise
   where
     formats = map canonizeGlob $ mapMaybe (parse formatParser) strs
     matchesAny d = any (`globFP` d) formats
