@@ -10,6 +10,9 @@ data PatternMatcher = MkPatternMatcher
     allMatch :: String -> [String]
   }
 
+instance Show PatternMatcher where
+  show _ = "<matcher>"
+
 -- | Result of trying to extract a pattern
 data PatternTry
   = PatternSuccess PatternMatcher -- Correct pattern -> matching funciton
