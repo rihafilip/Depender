@@ -5,4 +5,4 @@ import Depender.Writer.Stdout (stdoutWriter)
 
 -- | Default writer list
 defaultList :: [(String, Writer)]
-defaultList = [("stdout", stdoutWriter)]
+defaultList = [("mermaid", mermaidWriter), ("stdout", stdoutWriter)]
