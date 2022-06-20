@@ -10,7 +10,6 @@ import Data.Char (isSpace)
 import Data.Functor (($>))
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
-import Debug.Trace
 import Depender.DependencyGraph
 import Depender.Pattern hiding (fromConfig, getPattern)
 import Text.Parser
@@ -44,7 +43,7 @@ extensionInner ::
   CharParser (Either String) (Int, InnerRegex) ->
   CharParser (Either String) (Int, InnerRegex)
 extensionInner prev = do
-  (count, out) <- (\p -> trace (show p) p) <$> prev
+  (count, out) <- prev
 
   let mapSimple constr str =
         extensionInner ((count, constr out) <$ string str)
