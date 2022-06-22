@@ -1,7 +1,4 @@
-{-# HLINT ignore "Redundant lambda" #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
-module Depender.File.Glob (FileMatcher, globFilterFPs) where
+module Depender.File.Glob (FileMatcher, runFileMatcher, globFilterFPs) where
 
 import Control.Applicative
 import Data.Maybe (mapMaybe)
