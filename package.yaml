@@ -29,7 +29,9 @@ library:
   - filepath
   - containers
   - aeson
+  - aeson-combinators
   - vector
+  - bytestring
 
 executables:
   Depender-exe:
@@ -57,4 +59,5 @@ tests:
     - filepath
     - raw-strings-qq
     - yaml
+    - aeson-combinators
     - bytestring

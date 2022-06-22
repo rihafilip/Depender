@@ -1,12 +1,12 @@
 {-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
 module Depender.Configuration.Spec (spec) where
 
-import qualified Data.ByteString.Char8 as B
 import Data.Either (isRight)
-import Data.Yaml (ParseException, decodeEither')
+import Data.Yaml.Combinator
 import Depender.Configuration
+import qualified Depender.Pattern.Default as P
+import qualified Depender.Writer.Default as W
 import Test.Hspec
 import Text.RawString.QQ
 
@@ -60,5 +60,5 @@ haskell:
 spec = do
   describe "Configuration parsing" $ do
     it "Parses complex config" $ do
-      (decodeEither' (B.pack config) :: Either ParseException Configuration)
+      runYamlDecoder (configurationDecoder P.defaultList W.defaultList) config
         `shouldSatisfy` isRight

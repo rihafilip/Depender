@@ -9,10 +9,14 @@ module Depender.Configuration
     PatternWithMetadata (..),
     PatternType (..),
     PatternName (..),
+
+    -- * Configuration decoder
+    configurationDecoder,
   )
 where
 
 import Control.Applicative (Alternative ((<|>)), empty)
+import qualified Data.Aeson.Combinators.Decode as Comb
 import qualified Data.Aeson.Key as Key
 import qualified Data.Aeson.KeyMap as KeyMap
 import qualified Data.Bifunctor as Bf
@@ -30,8 +34,7 @@ import Depender.Writer as Writer (Writer, getWriter)
 import qualified Depender.Writer.Default as Writer (defaultList)
 
 -- | The complete configuration
-newtype Configuration = MkConfig [SingleConfiguration]
-  deriving (Show)
+type Configuration = [SingleConfiguration]
 
 -- | One single configuration
 data SingleConfiguration = MkSingleConf
@@ -147,16 +150,15 @@ parseConfiguration ::
   Yaml.Parser Configuration
 parseConfiguration ps ws =
   Yaml.withObject "Configurations" $
-    \o ->
-      MkConfig
-        <$> mapM
-          ( uncurry (parseSingleConfiguration ps ws)
-              . Bf.first Key.toString
-          )
-          (KeyMap.toList o)
+    \o -> mapM go (KeyMap.toList o)
+  where
+    go =
+      uncurry (parseSingleConfiguration ps ws)
+        . Bf.first Key.toString
 
---------------------------------------------
-
--- | TODO changeble
-instance Yaml.FromJSON Configuration where
-  parseJSON = parseConfiguration Pattern.defaultList Writer.defaultList
+-- | Get a Aeson Combinator decoder for list of patterns and writers
+configurationDecoder ::
+  [Pattern] ->
+  [(String, Writer)] ->
+  Comb.Decoder Configuration
+configurationDecoder ps ws = Comb.Decoder $ parseConfiguration ps ws
