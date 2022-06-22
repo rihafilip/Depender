@@ -29,13 +29,6 @@ formatParser =
         Character <$> succeed
       ]
 
-{-
->>> globFilterFPs ["src/***.hs"] ["src/hello/world" , "src/hi.hs"]
->>> globFilterFPs ["src/**/*.hs"] ["src/hello/world" , "src/hi.hs"]
-Just ["src/hi.hs"]
-Just ["src/hi.hs"]
--}
-
 -- | match one format on one filepath
 globFP :: [Format] -> FilePath -> Bool
 globFP [] [] = True

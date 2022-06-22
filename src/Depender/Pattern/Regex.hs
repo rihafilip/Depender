@@ -158,3 +158,48 @@ fromConfig _ = IncorrectPattern
 -- | The actual regex pattern
 regexPattern :: Pattern
 regexPattern = ("Regex", fromConfig)
+
+----------------------------------------------------------
+
+{- $
+Missing output
+>>> getPattern ""
+Left ...
+
+>>> getPattern "\\@\\*"
+Left ...
+
+>>> getPattern "\\@\\+"
+Left ...
+
+>>> getPattern "\\@\\|x"
+Left ...
+
+>>> getPattern "x\\|\\@"
+Left ...
+
+----------------------------------------------------------
+Escaped characters
+>>> getPattern "\\@\\\\"
+Right [Output,Character '\\']
+
+>>> getPattern"@\\@"
+Right [Character '@',Output]
+
+----------------------------------------------------------
+Advanced patterns
+>>> getPattern "\\^x\\@"
+Right [StartOfLine,Character 'x',Output]
+
+>>> getPattern "abc"
+Left ...
+
+>>> getPattern "\\^ \\(q\\)\\? i \\@"
+Right [StartOfLine,Space,Optional (Subgroup [Character 'q']),Space,Character 'i',Space,Output]
+
+>>> getPattern "\\@\\.\\*x"
+Right [Output,ZeroOrMore AnyNonSpace,Character 'x']
+
+>>> getPattern "\\(\\@a\\)\\|\\(\\@b\\)"
+Right [Alternation (Subgroup [Output,Character 'a']) (Subgroup [Output,Character 'b'])]
+-}

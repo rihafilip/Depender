@@ -64,18 +64,17 @@ instance Alternative m => Alternative (Parser m i) where
   (MkParser l) <|> (MkParser r) =
     MkParser $ \str -> l str <|> r str
 
+-- $
+-- Monad test
+-- >>> parse (char 'a' >>= \a -> string ['b', a] ) $ "aba"
+-- "ba"
+
 instance Monad (Parser m i) where
   (MkParser f) >>= g =
     MkParser $ \inp -> do
       (x, str2) <- f inp
       let MkParser h = g x
       h str2
-
-{-
->>> parse (char 'x' >>= \y -> string ['l', y] ) $ "xlx"
-"lx"
-
--}
 
 instance MonadFail (Parser m i) where
   fail str = MkParser (const $ fail str)
@@ -85,6 +84,12 @@ pfail :: String -> Parser m i o
 pfail = fail
 
 ------------------------------------------
+-- $setup
+-- >>> import Data.Char (isSpace)
+
+-- $
+-- >>> parse (satisfy isSpace) " "
+-- ' '
 
 -- | Put a token to predicate, returning it on true and failing on false
 satisfy :: (i -> Bool) -> Parser m i i
@@ -92,21 +97,46 @@ satisfy p = MkParser $ \case
   (x : xs) | p x -> pure (x, xs)
   _ -> fail "Predicate not satified"
 
+-- $
+-- >>> parse (isSpace =?> "output") " "
+-- "output"
+
 -- | Satisfy that returns a different output
 (=?>) :: (i -> Bool) -> a -> Parser m i a
 (=?>) p = (<$ satisfy p)
+
+-- $
+-- >>> parse succeed  "c"
+-- 'c'
 
 -- | Always get the next token
 succeed :: Parser m i i
 succeed = satisfy (const True)
 
+-- $
+-- >>> const 'x' <$> parse epsilon ""
+-- 'x'
+
 -- | Don't take anything from input and succeed
 epsilon :: Parser m i ()
 epsilon = pure ()
 
+
+-- $
+-- >>> let p = choice [isSpace =?> 'x', (== 'c') =?> 'y']
+-- >>> parse p " "
+-- 'x'
+-- >>> parse p "c"
+-- 'y'
+
 -- | Try to succeed with any of the given parsers
 choice :: Alternative m => [Parser m i o] -> Parser m i o
 choice = asum
+
+-- $
+-- >>> let p x = satisfy (== x)
+-- >>> parse (chain [p 10, p 20, p (-5)]) [10, 20, -5]
+-- [10,20,-5]
 
 -- | Chain many parsers together
 chain :: [Parser m i o] -> Parser m i [o]

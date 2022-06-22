@@ -52,3 +52,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - Depender
+    - doctest
+    - hspec
+    - filepath
