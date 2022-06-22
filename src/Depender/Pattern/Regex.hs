@@ -45,17 +45,17 @@ extensionInner ::
 extensionInner prev = do
   (count, out) <- prev
 
-  let mapSimple constr str =
-        extensionInner ((count, constr out) <$ string str)
+  let mapSimple manipC constr str =
+        extensionInner ((manipC count, constr out) <$ string str)
   let alter =
         Bf.bimap (min count) (Alternation out) <$ string "\\|" <*> getInner
 
   choice
     ( map
         extensionInner
-        [ mapSimple ZeroOrMore "\\*",
-          mapSimple OneOrMore "\\+",
-          mapSimple Optional "\\?",
+        [ mapSimple (* 0) ZeroOrMore "\\*",
+          mapSimple (* 2) OneOrMore "\\+",
+          mapSimple (* 0) Optional "\\?",
           alter
         ]
     )
