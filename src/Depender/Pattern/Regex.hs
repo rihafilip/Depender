@@ -14,22 +14,7 @@ import Depender.DependencyGraph
 import Depender.Pattern hiding (fromConfig, getPattern)
 import Text.Parser
 import Prelude hiding (any)
-
--- | Different types of regular expressions that are possible
-data InnerRegex
-  = Character Char
-  | Output
-  | AnyNonSpace
-  | Any
-  | StartOfLine
-  | EndOfLine
-  | Optional InnerRegex
-  | ZeroOrMore InnerRegex
-  | OneOrMore InnerRegex
-  | Subgroup [InnerRegex]
-  | Alternation InnerRegex InnerRegex
-  | Space
-  deriving (Show)
+import Depender.Pattern.Regex.Inner
 
 ----------------------------------------------------------
 
@@ -107,40 +92,10 @@ yield = ((: []) <$>)
 loid :: ListParser o1 -> ListParser [o2]
 loid = ([] <$)
 
-----------------------------------------------------------
 
--- | Transform a InnerRegex to an actual parser
-compile :: [InnerRegex] -> ListParser String
-compile = foldl (liftA2 $ \xs x -> concat x ++ xs) ("" <$ epsilon) . map trans
-  where
-    trans :: InnerRegex -> Parser [] Char [String]
-    trans =
-      \case
-        Character c -> loid $ char c
-        Output -> yield $ some (satisfy (not . isSpace))
-        AnyNonSpace -> loid $ satisfy (not . isSpace)
-        Any -> loid succeed
-        StartOfLine -> undefined -- TODO
-        EndOfLine -> loid $ char '\n'
-        Optional ir -> (trans ir <|> (succeed $> []))
-        ZeroOrMore ir -> concat <$> many (trans ir)
-        OneOrMore ir -> concat <$> some (trans ir)
-        Subgroup irs -> yield $ compile irs
-        Alternation ir1 ir2 -> trans ir1 <|> trans ir2
-        Space -> loid $ satisfy isSpace
-
-----------------------------------------------------------
-
--- | Run a parser and return the first match
-regexFirst :: ListParser String -> String -> Maybe String
-regexFirst parser str =
-  case regexAll parser str of
-    x:xs -> Just x
-    [] -> Nothing
-
--- | Run a parser and return all matches
-regexAll :: ListParser String -> String -> [String]
-regexAll parser = map fst . runParser parser
+-- | Run regex and return the first match
+runInnerRegexFirst :: [InnerRegex] -> String -> Maybe String
+runInnerRegexFirst = undefined
 
 ----------------------------------------------------------
 
@@ -150,9 +105,8 @@ fromConfig (Yaml.String str) =
   case getPattern (T.unpack str) of
     Left s -> PatternError s
     Right irs ->
-      let compiled = compile irs
-       in PatternSuccess $
-            MkPatternMatcher (regexFirst compiled) (regexAll compiled)
+      PatternSuccess $
+        MkPatternMatcher (runInnerRegexFirst irs) (runInnerRegex irs)
 fromConfig _ = IncorrectPattern
 
 -- | The actual regex pattern
