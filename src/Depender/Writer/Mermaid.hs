@@ -54,3 +54,12 @@ transformer g =
 -- | Writer that outputs a MermaidJs format
 mermaidWriter :: Writer
 mermaidWriter = MkWriter ( flip writeFile . transformer )
+
+{-$
+>>> transformer $ G.addVertex G.empty "v"
+"flowchart TD;\n\tid0(\"v\");\n"
+
+>>> transformer $ G.addDependecies G.empty "x" ["y"]
+"flowchart TD;\n\tid0(\"x\");\n\tid1(\"y\");\n\tid0 --> id1;\n"
+
+-}

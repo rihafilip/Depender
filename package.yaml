@@ -55,3 +55,6 @@ tests:
     - doctest
     - hspec
     - filepath
+    - raw-strings-qq
+    - yaml
+    - bytestring
