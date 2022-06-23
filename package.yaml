@@ -27,11 +27,13 @@ library:
   - yaml
   - text
   - filepath
+  - directory
   - containers
   - aeson
   - aeson-combinators
   - vector
   - bytestring
+  - rainbow
 
 executables:
   Depender-exe:
