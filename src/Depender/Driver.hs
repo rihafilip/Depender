@@ -66,14 +66,10 @@ runSingleConf files conf = do
 
 -- | Finish the
 finishAndWrite :: SingleConfiguration -> G.Graph -> IO ()
-finishAndWrite MkSingleConf {writerType, outputFile} graph =
-  doesFileExist outputFile >>= \exists ->
-    if not exists
-      then printError $ "Output file '" ++ outputFile ++ "' does not exist"
-      else do
-        printInfoAbout "Writing output to file" outputFile
-        runWriter writerType graph outputFile
-        printInfo ("Succesfuly written to " ++ outputFile)
+finishAndWrite MkSingleConf {writerType, outputFile} graph = do
+  printInfoAbout "Writing output to file " outputFile
+  runWriter writerType graph outputFile
+  printSuccess ("Succesfuly written to " ++ outputFile)
 
 -------------------------------------------------------------------------
 

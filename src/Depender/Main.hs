@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE NamedFieldPuns #-}
 
 module Depender.Main (defaultMain) where
 
@@ -42,7 +41,6 @@ defaultMain ::
 defaultMain ps ws = do
   wd <- getCurrentDirectory
   args <- cmdArgs (argConf wd)
-  print args
   conf <- canonicalizePath $ config args
   fold <- canonicalizePath $ folder args
   configIsFile <- doesFileExist conf
