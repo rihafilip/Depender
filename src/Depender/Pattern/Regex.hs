@@ -95,7 +95,9 @@ loid = ([] <$)
 
 -- | Run regex and return the first match
 runInnerRegexFirst :: [InnerRegex] -> String -> Maybe String
-runInnerRegexFirst = undefined
+runInnerRegexFirst irs str = case runInnerRegex irs str of
+  [] -> Nothing
+  x : _ -> Just x
 
 ----------------------------------------------------------
 
