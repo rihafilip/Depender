@@ -34,6 +34,7 @@ library:
   - vector
   - bytestring
   - rainbow
+  - cmdargs
 
 executables:
   Depender-exe:
