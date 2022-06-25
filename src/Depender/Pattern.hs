@@ -1,12 +1,16 @@
+-- |  Module defining the interface to patterns
 module Depender.Pattern where
 
 import qualified Data.Yaml as Yaml
 
--- | Data of one pattern - it's name and function to extraxt PatternMatcher
+-- | Data of one pattern - it's name and function to extract PatternMatcher
 type Pattern = (String, Yaml.Value -> PatternTry)
 
+-- | An actual pattern matcher
 data PatternMatcher = MkPatternMatcher
-  { firstMatch :: String -> Maybe String,
+  { -- | Function to find the first match
+    firstMatch :: String -> Maybe String,
+    -- | Function to find all the matches
     allMatch :: String -> [String]
   }
 

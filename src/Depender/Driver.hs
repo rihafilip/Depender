@@ -1,7 +1,7 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE TupleSections #-}
 
+-- | The base IO driver of the program
 module Depender.Driver (run, printError, printSuccess, printInfo) where
 
 import Control.Applicative (Applicative (liftA2))
@@ -84,19 +84,24 @@ recursiveList fp = do
 
 -------------------------------------------------------------------------
 
+-- | Transform String to Chunk
 toChunk :: String -> Chunk
 toChunk = chunk . T.pack
 
+-- | Pretty print an error
 printError :: String -> IO ()
 printError = putChunkLn . fore red . toChunk
 
+-- | Pretty print an info
 printInfo :: String -> IO ()
 printInfo = putChunkLn . fore blue . toChunk
 
+-- | Pretty print an info message about something
 printInfoAbout :: String -> String -> IO ()
 printInfoAbout info about =
   putChunk (fore blue $ toChunk info)
     >> putStrLn about
 
+-- | Pretty print a success mesage
 printSuccess :: String -> IO ()
 printSuccess = putChunkLn . fore green . toChunk

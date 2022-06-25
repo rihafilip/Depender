@@ -1,6 +1,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TupleSections #-}
 
+-- | Inner representation of regex
 module Depender.Pattern.Regex.Inner (InnerRegex (..), runInnerRegex) where
 
 import Control.Applicative (Alternative (empty), (<|>))
@@ -125,63 +126,62 @@ x +> f = do
 
 ----------------------------------------------
 
-{- $
->>> Character 'x' ~= "xx"
-Just ("","x")
->>> Character 'x' ~= "y"
-Nothing
-
->>> Output ~= "abc d"
-Just ("abc"," d")
-
->>> AnyNonSpace ~= "xy"
-Just ("","y")
->>> AnyNonSpace ~= " x"
-Nothing
-
->>> Any ~= "xy"
-Just ("","y")
->>> Any ~= " x"
-Just ("","x")
-
-TODO StartOfLine
-
->>> EndOfLine ~= "\nx"
-Just ("","x")
->>> EndOfLine ~= "xx"
-Nothing
-
->>> Optional (Character 'x') ~= "xx"
-Just ("","x")
->>> Optional (Character 'x') ~= "yy"
-Just ("","yy")
-
->>> ZeroOrMore (Character 'x') ~= "xxy"
-Just ("","y")
->>> ZeroOrMore (Character 'x') ~= "yy"
-Just ("","yy")
-
->>> OneOrMore (Character 'x') ~= "xxy"
-Just ("","y")
->>> OneOrMore (Character 'x') ~= "yy"
-Nothing
-
->>> let sub = Subgroup [Character 'x', Character 'y']
->>> sub ~= "xyz"
-Just ("","z")
->>> sub ~= "xxx"
-Nothing
-
->>> let al = Alternation (Character 'a') (Character 'b')
->>> al ~= "ax"
-Just ("","x")
->>> al ~= "bx"
-Just ("","x")
->>> al ~= "xx"
-Nothing
-
->>> Space ~= "   x"
-Just ("","x")
->>> Space ~= "x"
-Nothing
--}
+-- $
+-- >>> Character 'x' ~= "xx"
+-- Just ("","x")
+-- >>> Character 'x' ~= "y"
+-- Nothing
+--
+-- >>> Output ~= "abc d"
+-- Just ("abc"," d")
+--
+-- >>> AnyNonSpace ~= "xy"
+-- Just ("","y")
+-- >>> AnyNonSpace ~= " x"
+-- Nothing
+--
+-- >>> Any ~= "xy"
+-- Just ("","y")
+-- >>> Any ~= " x"
+-- Just ("","x")
+--
+-- TODO StartOfLine
+--
+-- >>> EndOfLine ~= "\nx"
+-- Just ("","x")
+-- >>> EndOfLine ~= "xx"
+-- Nothing
+--
+-- >>> Optional (Character 'x') ~= "xx"
+-- Just ("","x")
+-- >>> Optional (Character 'x') ~= "yy"
+-- Just ("","yy")
+--
+-- >>> ZeroOrMore (Character 'x') ~= "xxy"
+-- Just ("","y")
+-- >>> ZeroOrMore (Character 'x') ~= "yy"
+-- Just ("","yy")
+--
+-- >>> OneOrMore (Character 'x') ~= "xxy"
+-- Just ("","y")
+-- >>> OneOrMore (Character 'x') ~= "yy"
+-- Nothing
+--
+-- >>> let sub = Subgroup [Character 'x', Character 'y']
+-- >>> sub ~= "xyz"
+-- Just ("","z")
+-- >>> sub ~= "xxx"
+-- Nothing
+--
+-- >>> let al = Alternation (Character 'a') (Character 'b')
+-- >>> al ~= "ax"
+-- Just ("","x")
+-- >>> al ~= "bx"
+-- Just ("","x")
+-- >>> al ~= "xx"
+-- Nothing
+--
+-- >>> Space ~= "   x"
+-- Just ("","x")
+-- >>> Space ~= "x"
+-- Nothing

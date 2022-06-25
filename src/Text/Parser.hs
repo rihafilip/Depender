@@ -3,6 +3,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TupleSections #-}
 
+-- | Simple monadic parser combinator, polymorphic on the contained monad
 module Text.Parser
   ( -- * Base parser
     Parser (runParser),
@@ -35,7 +36,7 @@ import Control.Monad ((>=>))
 import qualified Data.Bifunctor as Bf
 import Data.Foldable (asum)
 
--- | Base parser type. It takes a MonadFail `m`, input type `i` and output type `o`
+-- | Base parser type. It takes a MonadFail m, input type i and output type o
 newtype Parser m i o = MkParser {runParser :: MonadFail m => [i] -> m (o, [i])}
 
 -- | Run a parser
@@ -84,6 +85,7 @@ pfail :: String -> Parser m i o
 pfail = fail
 
 ------------------------------------------
+
 -- $setup
 -- >>> import Data.Char (isSpace)
 
@@ -120,7 +122,6 @@ succeed = satisfy (const True)
 -- | Don't take anything from input and succeed
 epsilon :: Parser m i ()
 epsilon = pure ()
-
 
 -- $
 -- >>> let p = choice [isSpace =?> 'x', (== 'c') =?> 'y']

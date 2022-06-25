@@ -1,3 +1,4 @@
+-- | Module defining the interface to writers
 module Depender.Writer where
 
 import Depender.DependencyGraph

@@ -1,3 +1,4 @@
+-- | A simple graph model used to create dependecies
 module Depender.DependencyGraph
   ( -- * Grap types
     Name,

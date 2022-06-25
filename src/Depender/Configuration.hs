@@ -2,6 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+-- | The whole configuration types
+
 module Depender.Configuration
   ( -- * Configuration types
     Configuration (..),

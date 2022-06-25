@@ -1,3 +1,4 @@
+-- | File path with globs matcher
 module Depender.File.Glob (FileMatcher, runFileMatcher, globFilterFPs) where
 
 import Control.Applicative
@@ -54,6 +55,7 @@ canonizeGlob (Star : DoubleStar : fs) = canonizeGlob (DoubleStar : fs)
 canonizeGlob (DoubleStar : Star : fs) = canonizeGlob (DoubleStar : fs)
 canonizeGlob (f : fs) = f : canonizeGlob fs
 
+-- | The actual file matcher type
 newtype FileMatcher = MkFileMatcher { runFileMatcher :: [FilePath] -> [FilePath] }
 
 instance Show FileMatcher where

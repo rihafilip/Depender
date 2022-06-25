@@ -1,6 +1,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TupleSections #-}
 
+-- | Regex pattern matcher
 module Depender.Pattern.Regex (regexPattern) where
 
 import Control.Applicative (Alternative (many, some), Applicative (liftA2), (<|>))

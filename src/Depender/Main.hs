@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 
+-- | Definitons of runnable CLI
 module Depender.Main (defaultMain) where
 
 import Data.Data
