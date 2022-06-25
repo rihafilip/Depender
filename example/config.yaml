@@ -1,0 +1,10 @@
+example:
+    files:
+        - "src/**/*.hs"
+
+    patterns:
+        - pattern: import \?\(qualified\)\? \?\@
+          name: module \@
+
+    type: mermaid
+    output: "example/out.md"
