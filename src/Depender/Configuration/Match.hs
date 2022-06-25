@@ -28,21 +28,20 @@ patternsToGraph ::
   -- | List of (file path, content)
   [(FilePath, String)] ->
   -- | Output graph or error
-  Either String G.Graph
-patternsToGraph patts files = foldr (\p g -> patternToGraph p g files) (Right G.empty) patts
+  G.Graph
+patternsToGraph patts files = foldr (\p g -> patternToGraph p g files) G.empty patts
 
-patternToGraph :: NamedPattern -> Either String G.Graph -> [(FilePath, String)] -> Either String G.Graph
-patternToGraph patt = foldr ((=<<) . patternGo patt)
+patternToGraph :: NamedPattern -> G.Graph -> [(FilePath, String)] -> G.Graph
+patternToGraph patt = foldr (patternGo patt)
 
-patternGo :: NamedPattern -> (FilePath, String) -> G.Graph -> Either String G.Graph
+patternGo :: NamedPattern -> (FilePath, String) -> G.Graph -> G.Graph
 patternGo MkNamedPattern {pName, actualPattern} (fp, content) graph =
   maybe
-    (Left $ "No name found for file '" ++ fp ++ "'")
-    (Right . add)
+    graph
+    (\name -> G.addDependecies graph name matches)
     $ getName pName fp content
   where
     matches = allMatch actualPattern content
-    add name = G.addDependecies graph name matches
 
 ------------------------------------------------------------------
 

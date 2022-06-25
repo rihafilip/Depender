@@ -59,17 +59,12 @@ runSingleConf :: [FilePath] -> SingleConfiguration -> IO ()
 runSingleConf files conf = do
   printInfo $ "Processing configuration '" ++ cName conf ++ "'"
   filesAndCont <- mapM (\fp -> (fp,) <$> readFile fp) files
-  either
-    printError
-    (finishAndWrite conf)
-    (patternsToGraph (patterns conf) filesAndCont)
-
--- | Finish the
-finishAndWrite :: SingleConfiguration -> G.Graph -> IO ()
-finishAndWrite MkSingleConf {writerType, outputFile} graph = do
-  printInfoAbout "Writing output to file " outputFile
-  runWriter writerType graph outputFile
-  printSuccess ("Succesfuly written to " ++ outputFile)
+  let graph = patternsToGraph (patterns conf) filesAndCont
+  let out = outputFile conf
+  printInfoAbout "Writing output to file " out
+  let writer = writerType conf
+  runWriter writer graph out
+  printSuccess $ "Succesfuly written to " ++ out
 
 -------------------------------------------------------------------------
 
