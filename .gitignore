@@ -23,4 +23,5 @@ cabal.project.local
 *.cabal
 
 # Example ouput
-example/out.md
+example/*
+!example/*.yaml

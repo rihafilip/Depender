@@ -1,10 +1,22 @@
-example:
-    files:
-        - "src/**/*.hs"
+example-mermaid:
+  files:
+    - "src/**/*.hs"
 
-    patterns:
-        - pattern: import \?\(qualified\)\? \?\@
-          name: module \@
+  patterns:
+    - pattern: import \?\(qualified\)\? \?\@
+      name: module \@
 
-    type: mermaid
-    output: "example/out.md"
+  type: mermaid
+  output: "example/out.md"
+
+example-dot:
+  files:
+    - "src/**/*.hs"
+
+  patterns:
+    - pattern: import \(qualified\)\? Depender.\@
+      name: module Depender.\@
+
+  type: Dot
+  output: example/graph.dot
+
