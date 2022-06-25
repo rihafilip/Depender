@@ -18,20 +18,20 @@ getName pName fp content =
     FileNameNoExtension -> Just $ takeBaseName fp
     NameFromPattern pm -> firstMatch pm content
 
-patternsToGraph :: [PatternWithMetadata] -> [(FilePath, String)] -> Either String G.Graph
+patternsToGraph :: [NamedPattern] -> [(FilePath, String)] -> Either String G.Graph
 patternsToGraph patts files = foldr (\p g -> patternToGraph p g files) (Right G.empty) patts
 
-patternToGraph :: PatternWithMetadata -> Either String G.Graph -> [(FilePath, String)] -> Either String G.Graph
+patternToGraph :: NamedPattern -> Either String G.Graph -> [(FilePath, String)] -> Either String G.Graph
 patternToGraph patt = foldr ((=<<) . patternGo patt)
 
-patternGo :: PatternWithMetadata -> (FilePath, String) -> G.Graph -> Either String G.Graph
-patternGo MkPatternWMD {pName, actuallPattern} (fp, content) graph =
+patternGo :: NamedPattern -> (FilePath, String) -> G.Graph -> Either String G.Graph
+patternGo MkNamedPattern {pName, actualPattern} (fp, content) graph =
   maybe
     (Left $ "No name found for file '" ++ fp ++ "'")
     (Right . add)
     $ getName pName fp content
   where
-    matches = allMatch actuallPattern content
+    matches = allMatch actualPattern content
     add name = G.addDependecies graph name matches
 
 configurationOfName :: Configuration -> String -> Either String SingleConfiguration

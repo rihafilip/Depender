@@ -22,8 +22,6 @@ import System.Directory
 import System.FilePath (takeBaseName, takeFileName, (</>))
 import System.IO (readFile')
 
---  TODO maybe remove pattern type?
-
 -- | Run a configuration in a file
 run ::
   -- | List of all patterns

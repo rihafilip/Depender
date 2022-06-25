@@ -6,8 +6,7 @@ module Depender.Configuration
   ( -- * Configuration types
     Configuration (..),
     SingleConfiguration (..),
-    PatternWithMetadata (..),
-    PatternType (..),
+    NamedPattern (..),
     PatternName (..),
 
     -- * Configuration decoder
@@ -40,22 +39,17 @@ type Configuration = [SingleConfiguration]
 data SingleConfiguration = MkSingleConf
   { cName :: String,
     files :: FileMatcher,
-    patterns :: [PatternWithMetadata],
+    patterns :: [NamedPattern],
     writerType :: Writer,
     outputFile :: FilePath
   }
   deriving (Show)
 
 -- | Pattern with it's name and type
-data PatternWithMetadata = MkPatternWMD
-  { patternType :: PatternType,
-    pName :: PatternName,
-    actuallPattern :: PatternMatcher
+data NamedPattern = MkNamedPattern
+  { pName :: PatternName,
+    actualPattern :: PatternMatcher
   }
-  deriving (Show)
-
--- | If the patterns works on file or module structure
-data PatternType = PTModule | PTFile
   deriving (Show)
 
 -- | Different types of pattern naming
@@ -79,13 +73,9 @@ eiToPars = either fail pure
 --------------------------------------------
 
 -- | Parse a Pattern with metadata
-parsePattern :: [Pattern] -> Yaml.Value -> Yaml.Parser PatternWithMetadata
+parsePattern :: [Pattern] -> Yaml.Value -> Yaml.Parser NamedPattern
 parsePattern ps =
   Yaml.withObject "Pattern" $ \o -> do
-    patternType <-
-      o .: "type"
-        >>= Yaml.withText "Pattern type" matchType
-
     fileName <-
       o .:? "file-name"
         >>= mapM (Yaml.withText "File name type" matchFileName)
@@ -103,12 +93,10 @@ parsePattern ps =
         [] -> fail "Missing a file name specifier"
         _ -> fail "Too many name specifiers"
 
-    actuallPattern <- o .: "pattern" >>= eiToPars . flip getPattern ps
+    actualPattern <- o .: "pattern" >>= eiToPars . flip getPattern ps
 
-    return MkPatternWMD {patternType, pName, actuallPattern}
+    return MkNamedPattern {pName, actualPattern}
   where
-    matchType "module" = pure PTModule
-    matchType "file" = pure PTFile
     matchType _ = fail "Not a valid pattern type"
 
     matchFileName "with-extension" = pure FileNameWithExtension
