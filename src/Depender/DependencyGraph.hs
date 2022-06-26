@@ -10,7 +10,6 @@ module Depender.DependencyGraph
 
     -- * Manipulate graph
     addDependecies,
-    addVertex,
 
     -- * Extract verticies
     toList,
@@ -38,8 +37,7 @@ empty = MkGraph Map.empty
 addVertex :: Graph -> Name -> Graph
 addVertex (MkGraph g) name = MkGraph $ insertW g
   where
-    -- the consts keeps the previous value
-    insertW = Map.insertWith const name []
+    insertW = Map.insertWith (\new old -> old) name []
 
 -- | Add dependencies to a vertex, add the vertex if it is not present and
 -- add the dependencies as new verticies if they're not present
