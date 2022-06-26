@@ -30,9 +30,7 @@ import Data.Yaml ((.:), (.:?))
 import qualified Data.Yaml as Yaml
 import Depender.File.Glob
 import Depender.Pattern (Pattern, PatternMatcher, getPattern)
-import qualified Depender.Pattern.Default as Pattern (defaultList)
 import Depender.Writer as Writer (Writer, getWriter)
-import qualified Depender.Writer.Default as Writer (defaultList)
 
 -- | The complete configuration
 type Configuration = [SingleConfiguration]

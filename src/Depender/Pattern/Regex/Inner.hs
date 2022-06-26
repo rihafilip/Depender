@@ -1,5 +1,4 @@
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE TupleSections #-}
 
 -- | Inner representation of regex
 module Depender.Pattern.Regex.Inner (InnerRegex (..), runInnerRegex) where

@@ -4,7 +4,6 @@
 module Depender.Main (defaultMain) where
 
 import Data.Data
-import qualified Depender.DependencyGraph as G
 import qualified Depender.Driver as Driver
 import Depender.Pattern (Pattern)
 import Depender.Writer (Writer)
