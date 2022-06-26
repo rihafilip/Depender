@@ -42,18 +42,27 @@ array_access:
     - array4
 
 simple_string: this_string
+
+non_uniform:
+  key1: 10
+  key2: string
+  key3: null
+  key4: []
+  key5:
+    nested: object
 |]
 
 ------------------------------------------------------------
 
 -- | Input patterns
-patt1, patt2, patt3, patt4, patt5, patt6 :: String
+patt1, patt2, patt3, patt4, patt5, patt6, patt7 :: String
 patt1 = ".simple_array"
 patt2 = ".simple_object"
 patt3 = ".nested_object1.object"
 patt4 = ".nested_object2.object"
 patt5 = ".array_access[2][1]"
 patt6 = ".simple_string"
+patt7 = ".non_uniform"
 
 -- | Input iterators
 itKeys, itValues, itArray, itString :: String
@@ -102,6 +111,7 @@ spec = describe "Yaml Pattern" $ do
     pattToVal patt4 itKeys `shouldSatisfy` isPatternSucc
     pattToVal patt5 itKeys `shouldSatisfy` isPatternSucc
     pattToVal patt6 itKeys `shouldSatisfy` isPatternSucc
+    pattToVal patt7 itKeys `shouldSatisfy` isPatternSucc
   it "Parses iterators" $ do
     let simple = ".x"
     pattToVal simple itKeys `shouldSatisfy` isPatternSucc
@@ -117,3 +127,4 @@ spec = describe "Yaml Pattern" $ do
     runPatt patt4 itValues `shouldBe` Right ["value"]
     runPatt patt5 itArray `shouldBe` Right ["value1", "value2"]
     runPatt patt6 itString `shouldBe` Right ["this_string"]
+    runPatt patt7 itKeys `shouldBe` Right ["key1","key2","key3","key4","key5"]

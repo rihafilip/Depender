@@ -79,7 +79,7 @@ matchIterate = \case
   where
     iterateKeys =
       map (toString . fst) . KM.toList
-        <$> Decode.keyMap Decode.string
+        <$> Decode.keyMap (Decode.Decoder pure)
 
     iterateValues =
       map snd . KM.toList
