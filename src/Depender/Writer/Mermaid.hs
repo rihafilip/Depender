@@ -57,7 +57,7 @@ mermaidWriter :: Writer
 mermaidWriter = MkWriter (flip writeFile . transformer)
 
 -- $
--- >>> transformer $ G.addVertex G.empty "v"
+-- >>> transformer $ G.addDependecies G.empty "v" []
 -- "flowchart TD;\n\tid0(\"v\");\n"
 --
 -- >>> transformer $ G.addDependecies G.empty "x" ["y"]
