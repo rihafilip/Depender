@@ -17,15 +17,14 @@ elm-project:
     files:
         - "elm.json"
     patterns:
-        - type: module
-          fixed-name: "project"
+        - fixed-name: "project"
           pattern:
-                type: json-parser
-                json-path: ".dependencies.direct"
+                pattern-type: yaml-parser
+                path: ".dependencies.direct"
                 iterate-over: keys
 
-    type : UML
-    output: "doc/project-dependecy.png"
+    type : stdout
+    output: "dummy"
 
 cpp:
     files:
@@ -34,14 +33,12 @@ cpp:
 
     patterns:
         - pattern: \^#include <\@>
-          type: module
           file-name: with-extension
 
         - pattern: \^#include "\@"
-          type: file
           file-name: with-extension
 
-    type: dot
+    type: mermaid
     output: "doc/cpp-dep.dot"
 
 haskell:
@@ -50,10 +47,9 @@ haskell:
 
     patterns:
         - pattern: \^ import \@
-          type: module
           name: \^ module \@ where
 
-    type: dot
+    type: Dot
     output: "doc/backend-dep.dot"
 |]
 
