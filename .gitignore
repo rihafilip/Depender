@@ -25,3 +25,4 @@ cabal.project.local
 # Example ouput
 example/*
 !example/*.yaml
+!example/cpp-src/
