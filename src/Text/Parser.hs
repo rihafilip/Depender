@@ -25,6 +25,7 @@ module Text.Parser
     -- * Operators
     (=?>),
     (=$>),
+    (<$=),
   )
 where
 
@@ -162,9 +163,19 @@ char ch = satisfy (== ch)
 string :: String -> CharParser m String
 string = chain . map char
 
+--------------------------------------------
+
+infixl 4 =$>
+
 -- | Match a certain string, returning a different token
 (=$>) :: String -> a -> CharParser m a
 (=$>) str = (<$ string str)
+
+infixl 4 <$=
+
+-- | Flipped version of `(=$>)`
+(<$=) :: a -> String -> CharParser m a
+(<$=) = flip (=$>)
 
 --------------------------------------------
 -- Helper MonadFail instance

@@ -20,3 +20,20 @@ example-dot:
   type: Dot
   output: example/graph.dot
 
+example-yaml:
+  files:
+    - "./package.yaml"
+
+  patterns:
+    - pattern:
+        pattern-type: yaml-parser
+        path: .library.dependencies
+        iterate-over: array
+
+      name:
+        pattern-type: yaml-parser
+        path: .name
+        iterate-over: string
+
+  type: stdout
+  output: example/dependencies.dot

@@ -239,5 +239,5 @@ iterate-over: ( keys | values | array )
 ```yaml
 type: json-parser
 json-path: <string>
-iterate-over: ( keys | values | array )
+iterate-over: ( keys | values | array | string )
 ```
