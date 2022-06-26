@@ -11,6 +11,7 @@ import Depender.Writer (Writer)
 import System.Console.CmdArgs
 import System.Directory
 import Depender.Driver
+import System.FilePath (makeRelative)
 
 -- | Arguments type
 data Depender = MkDepender
@@ -28,7 +29,7 @@ argConf wd =
   MkDepender
     { configurations = def &= args &= typ "CONFIGS",
       config = def &= typFile,
-      folder = def &= help "Specify different folder to run in" &= opt wd &= typDir
+      folder = wd &= help "Specify different folder to run in" &= typDir
     }
     &= summary "Highly configurable dependency graph generator"
 
@@ -41,14 +42,15 @@ defaultMain ::
   IO ()
 defaultMain ps ws = do
   wd <- getCurrentDirectory
+  putStrLn wd
   args <- cmdArgs (argConf wd)
   conf <- canonicalizePath $ config args
-  fold <- canonicalizePath $ folder args
+  let fold = makeRelative wd $ folder args
   configIsFile <- doesFileExist conf
   folderExists <- doesPathExist fold
   if not configIsFile
     then printError $ conf ++ " doesn't exist or is not a file"
     else if not folderExists
-      then printError $ fold ++ " doesn't exist"
+      then printError $ fold ++ " folder doesn't exist"
       else
         Driver.run ps ws (configurations args) conf fold

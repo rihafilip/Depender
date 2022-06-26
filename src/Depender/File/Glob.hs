@@ -56,7 +56,7 @@ canonizeGlob (DoubleStar : Star : fs) = canonizeGlob (DoubleStar : fs)
 canonizeGlob (f : fs) = f : canonizeGlob fs
 
 -- | The actual file matcher type
-newtype FileMatcher = MkFileMatcher { runFileMatcher :: [FilePath] -> [FilePath] }
+newtype FileMatcher = MkFileMatcher {runFileMatcher :: [FilePath] -> [FilePath]}
 
 instance Show FileMatcher where
   show _ = "<fileMatcher>"
@@ -68,5 +68,12 @@ globFilterFPs strs
   | length formats /= length strs = Nothing
   | otherwise = Just . MkFileMatcher $ filter matchesAny . map normalise
   where
-    formats = map canonizeGlob $ mapMaybe (parse formatParser) strs
+    formats =
+      map canonizeGlob $
+        mapMaybe
+          ( parse formatParser
+              -- Make the pattern matchable
+              . makeRelative "."
+          )
+          strs
     matchesAny d = any (`globFP` d) formats

@@ -1,4 +1,3 @@
-{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE TupleSections #-}
 
 -- | The base IO driver of the program
@@ -37,8 +36,7 @@ run ::
   IO ()
 run ps ws runThis configFile workingDir = do
   printInfoAbout "Trying to parse a config file: " configFile
-  cont <- readFile' configFile
-  let res = runYamlDecoder (configurationDecoder ps ws) cont
+  res <- runYamlDecoderFile (configurationDecoder ps ws) configFile
   either
     (printError . ("Error while parsing configuration file:" ++))
     (\c -> runConf c runThis workingDir)
@@ -58,7 +56,9 @@ runConf conf runThis workingDir = do
 runSingleConf :: [FilePath] -> SingleConfiguration -> IO ()
 runSingleConf files conf = do
   printInfo $ "Processing configuration '" ++ cName conf ++ "'"
-  filesAndCont <- mapM (\fp -> (fp,) <$> readFile fp) files
+  let filteredFiles = runFileMatcher (fileMatcher conf) files
+  forM_  filteredFiles (printInfoAbout "File found: ")
+  filesAndCont <- mapM (\fp -> (fp,) <$> readFile fp) filteredFiles
   let graph = patternsToGraph (patterns conf) filesAndCont
   let out = outputFile conf
   printInfoAbout "Writing output to file " out
@@ -71,7 +71,6 @@ runSingleConf files conf = do
 -- | Recursively list all files in current working folder and it's subfolders
 recursiveList :: FilePath -> IO [FilePath]
 recursiveList fp = do
-  printInfoAbout "Recursively found: " fp
   ex <- doesFileExist fp
   if ex
     then pure [fp]

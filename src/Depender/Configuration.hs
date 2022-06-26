@@ -40,7 +40,7 @@ type Configuration = [SingleConfiguration]
 -- | One single configuration
 data SingleConfiguration = MkSingleConf
   { cName :: String,
-    files :: FileMatcher,
+    fileMatcher :: FileMatcher,
     patterns :: [NamedPattern],
     writerType :: Writer,
     outputFile :: FilePath
@@ -116,7 +116,7 @@ parseSingleConfiguration ps ws name =
   Yaml.withObject ("Configuration " ++ name) $ \o -> do
     (outputFile :: String) <- o .: "output"
 
-    files <-
+    fileMatcher <-
       o .: "files"
         >>= mbyToPars "Error in file format" . globFilterFPs
 
@@ -130,7 +130,7 @@ parseSingleConfiguration ps ws name =
           "Output type"
           (mbyToPars "Non-existent output type" . getWriter ws . T.unpack)
 
-    return MkSingleConf {cName = name, files, patterns, writerType, outputFile}
+    return MkSingleConf {cName = name, fileMatcher, patterns, writerType, outputFile}
 
 -- | Parse the whole configuration file
 parseConfiguration ::
