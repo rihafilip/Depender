@@ -32,10 +32,10 @@ cpp:
         - "src/*.hpp"
 
     patterns:
-        - pattern: \^#include <\@>
+        - pattern: '#include <\@>'
           file-name: with-extension
 
-        - pattern: \^#include "\@"
+        - pattern: '#include "\@"'
           file-name: with-extension
 
     type: mermaid
@@ -46,8 +46,8 @@ haskell:
         - "backend/.hs"
 
     patterns:
-        - pattern: \^ import \@
-          name: \^ module \@ where
+        - pattern: import \@
+          name: module \@ where
 
     type: Dot
     output: "doc/backend-dep.dot"

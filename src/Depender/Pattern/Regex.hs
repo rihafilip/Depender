@@ -56,7 +56,6 @@ simpleInner =
         (fmap (0,))
         [ "\\." =$> AnyNonSpace,
           "\\_" =$> Any,
-          "\\^" =$> StartOfLine,
           "\\$" =$> EndOfLine,
           "\\\\" =$> Character '\\',
           Space <$ satisfy isSpace,
@@ -145,14 +144,11 @@ Right [Character '@',Output]
 
 ----------------------------------------------------------
 Advanced patterns
->>> getPattern "\\^x\\@"
-Right [StartOfLine,Character 'x',Output]
-
 >>> getPattern "abc"
 Left ...
 
->>> getPattern "\\^ \\(q\\)\\? i \\@"
-Right [StartOfLine,Space,Optional (Subgroup [Character 'q']),Space,Character 'i',Space,Output]
+>>> getPattern " \\(q\\)\\? i \\@"
+Right [Space,Optional (Subgroup [Character 'q']),Space,Character 'i',Space,Output]
 
 >>> getPattern "\\@\\.\\*x"
 Right [Output,ZeroOrMore AnyNonSpace,Character 'x']
